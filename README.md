@@ -9,3 +9,7 @@ Controls in all menus:
 * B - next/back
 
 In-game controls should be intuitive.
+
+- - - -
+
+Makefile, startup.c and hardware.h provided by J. M. Spivey.
