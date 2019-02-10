@@ -4,6 +4,10 @@ Game suite for the BBC Micro:bit.
 Games currently included are:
 * Snake
 
+Games currently in development are:
+* Pong
+* Dodge
+
 Controls in all menus:
 * A - select/confirm
 * B - next/back

@@ -1,9 +1,9 @@
-#include "snake.h"
+#include "snake_game.h"
 #include "gio_arrays.h"
 #include "rng.h"
 
 const unsigned snakeGamePreview[ROWS] = {
-    0x2f00, 0x5900, 0x8f00
+    0x2af0, 0x5ff0, 0x9cf0
 };
 
 struct point {

@@ -8,7 +8,7 @@ CFLAGS = -O -g -Wall
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
 
-%.elf: %.o startup.o gio.o rng.o snake.o
+%.elf: %.o startup.o gio.o rng.o game_list.o snake_game.o pong_game.o dodge_game.o
 	$(CC) $(CPU) $(CFLAGS) -TNRF51822.ld -nostdlib \
 	    $^ -lgcc -o $@ -Wl,-Map,$*.map 
 	arm-none-eabi-size $@
