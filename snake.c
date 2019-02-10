@@ -1,18 +1,17 @@
-#include "gio.h"
+#include "snake.h"
+#include "gio_arrays.h"
 #include "rng.h"
+
+const unsigned snakeGamePreview[ROWS] = {
+    0x2f00, 0x5900, 0x8f00
+};
 
 struct point {
     int x, y;
     unsigned f;
 };
 
-static unsigned image[GSIZE][GSIZE];
-static unsigned patOn[ROWS];
-static unsigned patOff[ROWS];
-static int signals=0;
-static unsigned input[100];
-
-static struct point snake[GSIZE*GSIZE+1];
+static struct point snake[GSIZE*GSIZE+2];
 static unsigned isFree[GSIZE][GSIZE];
 static struct point food;
 static int snakeLen;
@@ -20,7 +19,6 @@ static int snakeDir;
 static unsigned snakeAlive;
 static int score;
 static int FPSTEP=9;
-static unsigned playAgain;
 
 void genFood(void) {
     if (snakeLen==GSIZE*GSIZE) return;
@@ -28,8 +26,7 @@ void genFood(void) {
     int curr=-1;
     for (int i=0;i<GSIZE && curr<pos;++i) {
         for (int j=0;j<GSIZE && curr<pos;++j) {
-            if (isFree[i][j])
-            {
+            if (isFree[i][j]) {
                 ++curr;
                 if (curr==pos) {
                     food.x=i;
@@ -44,8 +41,8 @@ void genFood(void) {
 void selectDifficulty() {
     int curr=0;
     while (!curr) {
-        generateNumberPattern(FPSTEP,patOn);
-        displayI(patOn,5,input,&signals);
+        generateNumberPattern(FPSTEP,pat1);
+        displayI(pat1,5,input,&signals);
         curr=getPress(input,&signals);
         if (curr>1) {
             ++FPSTEP;
@@ -82,7 +79,7 @@ void resetGame(void) {
     selectDifficulty();
 }
 
-void graphicsUpdate() {
+void genImageAndPats() {
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
             image[i][j]=0;
@@ -92,12 +89,16 @@ void graphicsUpdate() {
     {
         image[snake[i].x][snake[i].y]=1;
     }
-    generatePattern(image,patOff);
+    generatePattern(image,pat2);
     image[food.x][food.y]=1;
-    generatePattern(image,patOn);
-    displayI(patOn,FPSTEP/3,input,&signals);
-    displayI(patOff,2*FPSTEP/3,input,&signals);
-    displayI(patOn,FPSTEP,input,&signals);
+    generatePattern(image,pat1);
+}
+
+void graphicsUpdate() {
+    genImageAndPats();
+    displayI(pat1,FPSTEP/3,input,&signals);
+    displayI(pat2,2*FPSTEP/3,input,&signals);
+    displayI(pat1,FPSTEP,input,&signals);
 }
 
 void processInput(void) {
@@ -109,25 +110,6 @@ void processInput(void) {
     if (curr==1) --snakeDir;
     if (snakeDir<0) snakeDir=3;
     if (snakeDir==4) snakeDir=0;
-}
-
-void endScreen(void) {
-    graphicsUpdate();
-    display(patOn,40);
-    int curr=0;
-    while (curr<score) {
-        generateNumberPattern(curr,patOn);
-        display(patOn,8);
-        ++curr;
-    }
-    signals=0;
-    curr=0;
-    while (!curr) {
-        displayI(patOn,5,input,&signals);
-        curr=getPress(input,&signals);
-    }
-    if (curr>1) playAgain=0;
-    signals=0;
 }
 
 void moveSnake(void) {
@@ -151,7 +133,7 @@ void moveSnake(void) {
         }
     }
     head.f=0;
-    int prevLen=snakeLen;
+    int deathLen;
     if (head.x<0) head.x=GSIZE-1;
     if (head.x==GSIZE) head.x=0;
     if (head.y<0) head.y=GSIZE-1;
@@ -159,8 +141,13 @@ void moveSnake(void) {
     if (snake[snakeLen-1].f) {
         snake[snakeLen-1].f=0;
         ++snakeLen;
+        deathLen=snakeLen;
     }
-    else isFree[snake[snakeLen-1].x][snake[snakeLen-1].y]=1;
+    else {
+        deathLen=snakeLen+1;
+        snake[deathLen-1]=snake[snakeLen-1];
+        isFree[snake[snakeLen-1].x][snake[snakeLen-1].y]=1;
+    }
     for (int i=snakeLen-1;i>0;--i) {
         snake[i]=snake[i-1];
     }
@@ -173,22 +160,19 @@ void moveSnake(void) {
     }
     else if (!isFree[head.x][head.y]) {
         snakeAlive=0;
-        snakeLen=prevLen+1;
+        snakeLen=deathLen;
     }
     else isFree[head.x][head.y]=0;
 }
 
-void init(void) {
-    initGio();
-    srand(0);
-    playAgain=1;
-    while (playAgain) {
-        resetGame();
-        while (snakeAlive) {
-            graphicsUpdate();
-            processInput();
-            moveSnake();
-        }
-        endScreen();
+int playSnakeGame(void) {
+    resetGame();
+    while (snakeAlive) {
+        graphicsUpdate();
+        processInput();
+        moveSnake();
     }
+    genImageAndPats();
+    display(pat1,40);
+    return score;
 }

@@ -26,7 +26,7 @@ static const unsigned rowMasksFlip[ROWS] = {
 static const unsigned colMasks[COLS] = {
     0x0010, 0x0020, 0x0040,
     0x0080, 0x0100, 0x0200,
-    0x0400, 0x0800, 0x1000,
+    0x0400, 0x0800, 0x1000
 };
 /* generatePattern -- generates the pattern for a grid of pixels */
 void generatePattern(const unsigned image[GSIZE][GSIZE], unsigned pattern[ROWS])

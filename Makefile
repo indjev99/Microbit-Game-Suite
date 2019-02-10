@@ -1,12 +1,14 @@
 # lab2-gpio/Makefile
 # Copyright (c) 2018, J. M. Spivey
 
+all: game_suite.hex
+
 CPU = -mcpu=cortex-m0 -mthumb
 CFLAGS = -O -g -Wall
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
 
-%.elf: %.o startup.o gio.o rng.o
+%.elf: %.o startup.o gio.o rng.o snake.o
 	$(CC) $(CPU) $(CFLAGS) -TNRF51822.ld -nostdlib \
 	    $^ -lgcc -o $@ -Wl,-Map,$*.map 
 	arm-none-eabi-size $@
