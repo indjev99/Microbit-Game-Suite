@@ -1,12 +1,16 @@
 # Microbit-Game-Suite
 Game suite for the BBC Micro:bit.
 
-Games currently included are:
+Games included:
 * Snake
 
-Games currently in development are:
-* Pong
+Games in development:
 * Dodge
+
+Planned games:
+* Pong
+* Maze
+* Space Invaders
 
 Controls in all menus:
 * A - select/confirm

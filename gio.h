@@ -14,8 +14,6 @@ void delay(int n);
 void display(const unsigned pattern[ROWS], int n);
 /* displayI -- display a pattern n times and record input */
 void displayI(const unsigned pattern[ROWS], int n, unsigned input[], int* signals);
-/* getPress -- finds the first press of a button and moves all array elements */
-int getPress(unsigned input[], int* signals);
 /* initGio -- initializes graphics and IO */
 void initGio(void);
 

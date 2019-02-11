@@ -80,9 +80,9 @@ void display(const unsigned pattern[ROWS], int n) {
         }
     }
 }
-unsigned prevA;
-unsigned prevB;
-int handleInput(int input) {
+static unsigned prevA;
+static unsigned prevB;
+static int handleInput(int input) {
     unsigned signal=0;
     unsigned currA=!(input & BIT(BUTTON_A));
     unsigned currB=!(input & BIT(BUTTON_B));
@@ -106,21 +106,6 @@ void displayI(const unsigned pattern[ROWS], int n, unsigned input[], int* signal
             delay(5000);
         }
     }
-}
-/* getPress -- finds the first press of a button and moves all array elements */
-int getPress(unsigned input[], int* signals) {
-    int curr=0;
-    int i=0;
-    while (!curr &&  i<(*signals)) {
-        if (input[i]&1) curr+=1;
-        if (input[i]&2) curr+=2;
-        ++i;
-    }
-    for (int j=0;j<(*signals)-i;++j) {
-        input[j]=input[i+j];
-    }
-    (*signals)-=i;
-    return curr;
 }
 /* initGio -- initializes graphics and IO */
 void initGio(void) {

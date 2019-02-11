@@ -1,9 +1,10 @@
 #include "game_list.h"
 #include "gio.h"
+#include "gio_extended.h"
 #include "gio_arrays.h"
 #include "rng.h"
 
-unsigned endScreen(int score) {
+static unsigned endScreen(int score) {
     for (int i=0;i<=score;++i) {
         generateNumberPattern(i,pat1);
         display(pat1,8);
@@ -19,15 +20,15 @@ unsigned endScreen(int score) {
     return 1;
 }
 
-int playGame(int currGame) {
+static int playGame(int currGame) {
     return (*gameList[currGame].playGame)();
 }
 
-const unsigned* gamePreview(int currGame) {
+static const unsigned* gamePreview(int currGame) {
     return gameList[currGame].gamePreview;
 }
 
-void selectGame(int* currGame) {
+static void selectGame(int* currGame) {
     signals=0;
     int press=0;
     while (!press) {

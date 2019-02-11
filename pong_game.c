@@ -1,4 +1,5 @@
 #include "pong_game.h"
+#include "gio_extended.h"
 #include "gio_arrays.h"
 #include "rng.h"
 

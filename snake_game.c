@@ -1,4 +1,5 @@
 #include "snake_game.h"
+#include "gio_extended.h"
 #include "gio_arrays.h"
 #include "rng.h"
 
@@ -21,7 +22,7 @@ static int score;
 static int difficulty=1;
 static int FPSTEP;
 
-void genFood(void) {
+static void genFood(void) {
     if (snakeLen==GSIZE*GSIZE) return;
     int pos=rand()%(GSIZE*GSIZE-snakeLen);
     int curr=-1;
@@ -39,23 +40,12 @@ void genFood(void) {
     }
 }
 
-void selectDifficulty() {
-    int curr=0;
-    while (!curr) {
-        generateNumberPattern(difficulty,pat1);
-        displayI(pat1,5,input,&signals);
-        curr=getPress(input,&signals);
-        if (curr>1) {
-            ++difficulty;
-            if (difficulty > 15) difficulty=1;
-            curr-=2;
-        }
-    }
+static void selectDifficulty() {
+    selectNumber(1,15,&difficulty);
     FPSTEP=17-difficulty;
-    signals=0;
 }
 
-void resetGame(void) {
+static void resetGame(void) {
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
             isFree[i][j]=1;
@@ -81,7 +71,7 @@ void resetGame(void) {
     selectDifficulty();
 }
 
-void genImageAndPats() {
+static void genImageAndPats() {
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
             image[i][j]=0;
@@ -96,25 +86,22 @@ void genImageAndPats() {
     generatePattern(image,pat1);
 }
 
-void graphicsUpdate() {
+static void graphicsUpdate() {
     genImageAndPats();
     displayI(pat1,FPSTEP/3,input,&signals);
     displayI(pat2,2*FPSTEP/3,input,&signals);
     displayI(pat1,FPSTEP,input,&signals);
 }
 
-void processInput(void) {
-    int curr=3;
-    while (signals && curr==3) {
-        curr=getPress(input,&signals);
-    }
+static void processInput(void) {
+    int curr=getSinglePress(input,&signals);
     if (curr==2) ++snakeDir;
     if (curr==1) --snakeDir;
     if (snakeDir<0) snakeDir=3;
     if (snakeDir==4) snakeDir=0;
 }
 
-void moveSnake(void) {
+static void moveSnake(void) {
     struct point head=snake[0];
     switch (snakeDir) {
         case 0: {
