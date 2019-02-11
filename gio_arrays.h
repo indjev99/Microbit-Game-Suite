@@ -4,7 +4,7 @@
 #include "gio.h"
 
 unsigned image[GSIZE][GSIZE];
-unsigned pat1[ROWS],pat2[ROWS];
+unsigned pat1[ROWS],pat2[ROWS],pat3[ROWS],pat4[ROWS];
 int signals;
 unsigned input[100];
 

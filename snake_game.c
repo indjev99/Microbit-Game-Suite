@@ -42,7 +42,7 @@ static void genFood(void) {
 
 static void selectDifficulty() {
     selectNumber(1,15,&difficulty);
-    FPSTEP=17-difficulty;
+    FPSTEP=20-difficulty;
 }
 
 static void resetGame(void) {
@@ -88,9 +88,12 @@ static void genImageAndPats() {
 
 static void graphicsUpdate() {
     genImageAndPats();
-    displayI(pat1,FPSTEP/3,input,&signals);
-    displayI(pat2,2*FPSTEP/3,input,&signals);
-    displayI(pat1,FPSTEP,input,&signals);
+    int fst=FPSTEP/3;
+    int snd=2*FPSTEP/3-fst;
+    int trd=FPSTEP-fst-snd;
+    displayI(pat1,fst,input,&signals);
+    displayI(pat2,snd,input,&signals);
+    displayI(pat1,trd,input,&signals);
 }
 
 static void processInput(void) {

@@ -18,8 +18,9 @@ static int blockNum;
 static unsigned manAlive;
 static int score;
 static int difficulty=1;
-static int FPSTEP=2;
+static int FPSTEP=1;
 static int blockDelay;
+static int flicker;
 
 static void genBlock(int index) {
     int pos=rand()%GSIZE;
@@ -30,7 +31,7 @@ static void genBlock(int index) {
 
 static void selectDifficulty() {
     selectNumber(1,15,&difficulty);
-    blockDelay=(16-difficulty);
+    blockDelay=5*(18-difficulty)/3;
 }
 
 static void resetGame(void) {
@@ -44,6 +45,7 @@ static void resetGame(void) {
     blockNum=0;
     genBlock(blockNum);
     selectDifficulty();
+    flicker=4;
 }
 
 static void genImageAndPats() {
@@ -57,13 +59,15 @@ static void genImageAndPats() {
         if (blocks[i].x>=0 && blocks[i].x<GSIZE) image[blocks[i].x][blocks[i].y]=1;
         if (blocks[i].x>0 && blocks[i].x<=GSIZE) image[blocks[i].x-1][blocks[i].y]=1;
     }
+    generatePattern(image,pat2);
     image[man.x][man.y]=1;
     generatePattern(image,pat1);
 }
 
 static void graphicsUpdate() {
     genImageAndPats();
-    displayI(pat1,FPSTEP,input,&signals);
+    //displayI(pat1,FPSTEP,input,&signals);
+    display2I(pat1,pat2,0.025,FPSTEP,input,&signals);
 }
 
 static void processInput(void) {
@@ -102,7 +106,7 @@ int playDodgeGame(void) {
             cnt=0;
             moveBlocks();
             ++cnt2;
-            if (cnt2==(GSIZE+3)) {
+            if (cnt2==(GSIZE+2)*3+2) {
                 cnt2=0;
                 genBlock(blockNum);
             }
@@ -110,5 +114,5 @@ int playDodgeGame(void) {
     }
     genImageAndPats();
     display(pat1,40);
-    return score;
+    return (score+2)/3;
 }

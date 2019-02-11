@@ -2,6 +2,7 @@
 #include "hardware.h"
 
 #define COLS 9
+#define TIME 5000
 
 static const int rows[GSIZE][GSIZE] = {
     {0, 1, 0, 1, 0},
@@ -63,20 +64,32 @@ void generateNumberPattern(int n, unsigned pattern[ROWS]) {
 }
 /* delay -- pause for n microseconds */
 void delay(int n) {
-    unsigned t = n << 1;
-    while (t > 0) {
+    unsigned t=n<<1;
+    while (t>0) {
         // 500nsec per iteration at 16MHz
         nop(); nop(); nop();
         t--;
     }
 }
-/* display -- display a pattern n times */
+/* display -- display a pattern for n*15msec */
 void display(const unsigned pattern[ROWS], int n) {
     for (int i=0;i<n;++i) {
-        // Takes 15msec per iteration
-        for (int p = 0; p < ROWS; p++) {
-            GPIO_OUT = pattern[p];
-            delay(5000);
+        for (int r=0;r<ROWS;r++) {
+            GPIO_OUT = pattern[r];
+            delay(TIME);
+        }
+    }
+}
+/* display -- display between two patterns for n*15msec */
+void display2(const unsigned pattern1[ROWS], const unsigned pattern2[ROWS], double p, int n) {
+    int time1=p*TIME;
+    int time2=TIME-p*TIME;
+    for (int i=0;i<n;++i) {
+        for (int r=0;r<ROWS;r++) {
+            GPIO_OUT = pattern1[r];
+            delay(time1);
+            GPIO_OUT = pattern2[r];
+            delay(time2);
         }
     }
 }
@@ -94,16 +107,31 @@ static int handleInput(int input) {
     prevB=currB;
     return signal;
 }
-/* displayI -- display a pattern n times and record input */
+/* displayI -- display a pattern for n*15msec and record input */
 void displayI(const unsigned pattern[ROWS], int n, unsigned input[], int* signals) {
     unsigned curr;
     for (int i=0;i<n;++i) {
         curr=handleInput(GPIO_IN);
         if (curr) input[(*signals)++]=curr;
-        // Takes 15msec per iteration
-        for (int p = 0; p < ROWS; p++) {
-            GPIO_OUT = pattern[p];
-            delay(5000);
+        for (int r=0;r<ROWS;r++) {
+            GPIO_OUT = pattern[r];
+            delay(TIME);
+        }
+    }
+}
+/* display2I -- display between two patterns pattern for n*15msec and record input */
+void display2I(const unsigned pattern1[ROWS], const unsigned pattern2[ROWS], double p, int n, unsigned input[], int* signals) {
+    unsigned curr;
+    int time1=p*TIME;
+    int time2=TIME-p*TIME;
+    for (int i=0;i<n;++i) {
+        curr=handleInput(GPIO_IN);
+        if (curr) input[(*signals)++]=curr;
+        for (int r=0;r<ROWS;r++) {
+            GPIO_OUT = pattern1[r];
+            delay(time1);
+            GPIO_OUT = pattern2[r];
+            delay(time2);
         }
     }
 }
