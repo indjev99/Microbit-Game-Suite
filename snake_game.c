@@ -18,7 +18,8 @@ static int snakeLen;
 static int snakeDir;
 static unsigned snakeAlive;
 static int score;
-static int FPSTEP=9;
+static int difficulty=1;
+static int FPSTEP;
 
 void genFood(void) {
     if (snakeLen==GSIZE*GSIZE) return;
@@ -41,15 +42,16 @@ void genFood(void) {
 void selectDifficulty() {
     int curr=0;
     while (!curr) {
-        generateNumberPattern(FPSTEP,pat1);
+        generateNumberPattern(difficulty,pat1);
         displayI(pat1,5,input,&signals);
         curr=getPress(input,&signals);
         if (curr>1) {
-            ++FPSTEP;
-            if (FPSTEP > 20) FPSTEP=3;
+            ++difficulty;
+            if (difficulty > 15) difficulty=1;
             curr-=2;
         }
     }
+    FPSTEP=17-difficulty;
     signals=0;
 }
 
