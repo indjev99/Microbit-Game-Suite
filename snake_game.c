@@ -40,7 +40,7 @@ static void genFood(void) {
     }
 }
 
-static void selectDifficulty() {
+static void selectDifficulty(void) {
     selectNumber(1,15,&difficulty);
     FPSTEP=20-difficulty;
 }
@@ -71,7 +71,7 @@ static void resetGame(void) {
     selectDifficulty();
 }
 
-static void genImageAndPats() {
+static void genImageAndPats(void) {
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
             image[i][j]=0;
@@ -86,7 +86,7 @@ static void genImageAndPats() {
     generatePattern(image,pat1);
 }
 
-static void graphicsUpdate() {
+static void graphicsUpdate(void) {
     genImageAndPats();
     int fst=FPSTEP/3;
     int snd=2*FPSTEP/3-fst;

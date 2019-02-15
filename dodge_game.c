@@ -28,23 +28,22 @@ static int timeStamp;
 
 static void DFS(int x, int y) {
     isReachable[x][y]=timeStamp;
-    if (x>1 && y>0 && isFree[x][y-1] && isReachable[x][y-1]!=timeStamp) DFS(x,y-1);
-    if (x>1 && y<GSIZE-1 && isFree[x][y+1] && isReachable[x][y+1]!=timeStamp) DFS(x,y+1);
-    if (x>0 && isFree[x-1][y] && isReachable[x-1][y]!=timeStamp) DFS(x-1,y);
+    if (x==0) return;
+    if (y>0 && isFree[x][y-1] && isReachable[x][y-1]!=timeStamp) DFS(x,y-1);
+    if (y<GSIZE-1 && isFree[x][y+1] && isReachable[x][y+1]!=timeStamp) DFS(x,y+1);
+    if (isFree[x-1][y] && isReachable[x-1][y]!=timeStamp) DFS(x-1,y);
 }
 static void genBlock(int index) {
     ++timeStamp;
     DFS(man.x+1,man.y);
-    int poses[GSIZE];
+    int poses[GSIZE+100];
     int posNum=0;
     for (int i=0;i<GSIZE;++i) {
-        if (!isFree[0][i] || isReachable[0][i]!=timeStamp) continue;
-        if ((isReachable[0][i]!=timeStamp) ||
-            (i>0 && isReachable[0][i-1]==timeStamp) ||
-            (i<GSIZE-1 && isReachable[0][i+1]==timeStamp)) {
+        if (isReachable[0][i]==timeStamp &&
+            ((i>0 && isReachable[0][i-1]==timeStamp) ||
+             (i<GSIZE-1 && isReachable[0][i+1]==timeStamp))) {
             poses[posNum]=i;
             ++posNum;
-            continue;
         }
     }
     if (!posNum) {
@@ -54,7 +53,13 @@ static void genBlock(int index) {
         }
         return;
     }
-    int pos=poses[rand()%posNum];
+    int pos;
+    if (!rand()%3 && isReachable[0][man.y]==timeStamp &&
+        ((man.y>0 && isReachable[0][man.y-1]==timeStamp) ||
+         (man.y<GSIZE-1 && isReachable[0][man.y+1]==timeStamp))) {
+        pos=man.y;
+    }
+    else pos=poses[rand()%posNum];
     if (index==blockNum) {
         if (freeBlockNum) {
             --freeBlockNum;
@@ -67,7 +72,7 @@ static void genBlock(int index) {
     isFree[blocks[index].x+1][blocks[index].y]=0;
 }
 
-static void selectDifficulty() {
+static void selectDifficulty(void) {
     selectNumber(1,10,&difficulty);
     blockDelay=3*(14-difficulty)/2;
 }
@@ -90,7 +95,7 @@ static void resetGame(void) {
     flicker=4;
 }
 
-static void genImageAndPats() {
+static void genImageAndPats(void) {
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
             image[i][j]=0;
@@ -106,9 +111,8 @@ static void genImageAndPats() {
     generatePattern(image,pat1);
 }
 
-static void graphicsUpdate() {
+static void graphicsUpdate(void) {
     genImageAndPats();
-    //displayI(pat1,FPSTEP,input,&signals);
     display2I(pat1,pat2,0.033,FPSTEP,input,&signals);
 }
 
@@ -157,5 +161,5 @@ int playDodgeGame(void) {
     }
     genImageAndPats();
     display(pat1,40);
-    return score/5.0;
+    return (score+4)/5;
 }
