@@ -30,8 +30,8 @@ void selectNumber(int from, int to, int* number) {
     int curr=0;
     signals=0;
     while (!curr) {
-        generateNumberPattern(*number,pat1);
-        displayI(pat1,5,input,&signals);
+        generateNumberPattern(*number,pat[0]);
+        displayI(pat[0],5,input,&signals);
         curr=getPress(input,&signals);
         if (curr>1) {
             ++(*number);

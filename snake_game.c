@@ -81,9 +81,9 @@ static void genImageAndPats(void) {
     {
         image[snake[i].x][snake[i].y]=1;
     }
-    generatePattern(image,pat2);
+    generatePattern(image,pat[1]);
     image[food.x][food.y]=1;
-    generatePattern(image,pat1);
+    generatePattern(image,pat[0]);
 }
 
 static void graphicsUpdate(void) {
@@ -91,9 +91,9 @@ static void graphicsUpdate(void) {
     int fst=FPSTEP/3;
     int snd=2*FPSTEP/3-fst;
     int trd=FPSTEP-fst-snd;
-    displayI(pat1,fst,input,&signals);
-    displayI(pat2,snd,input,&signals);
-    displayI(pat1,trd,input,&signals);
+    displayI(pat[0],fst,input,&signals);
+    displayI(pat[1],snd,input,&signals);
+    displayI(pat[0],trd,input,&signals);
 }
 
 static void processInput(void) {
@@ -165,6 +165,6 @@ int playSnakeGame(void) {
         moveSnake();
     }
     genImageAndPats();
-    display(pat1,40);
+    display(pat[0],40);
     return score;
 }

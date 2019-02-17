@@ -6,13 +6,13 @@
 
 static unsigned endScreen(int score) {
     for (int i=0;i<=score;++i) {
-        generateNumberPattern(i,pat1);
-        display(pat1,8);
+        generateNumberPattern(i,pat[0]);
+        display(pat[0],8);
     }
     signals=0;
     int press=0;
     while (!press) {
-        displayI(pat1,5,input,&signals);
+        displayI(pat[0],5,input,&signals);
         press=getPress(input,&signals);
     }
     signals=0;

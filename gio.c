@@ -74,23 +74,30 @@ void delay(int n) {
 /* display -- display a pattern for n*15msec */
 void display(const unsigned pattern[ROWS], int n) {
     for (int i=0;i<n;++i) {
-        for (int r=0;r<ROWS;r++) {
+        for (int r=0;r<ROWS;++r) {
             GPIO_OUT = pattern[r];
             delay(TIME);
         }
     }
 }
-/* display -- display between two patterns for n*15msec */
-void display2(const unsigned pattern1[ROWS], const unsigned pattern2[ROWS], double p, int n) {
-    int time1=p*TIME;
-    int time2=TIME-p*TIME;
+/* displayN -- display k patterns for n*15msec */
+void displayN(const unsigned pattern[][ROWS], const double p[], const int k, int n) {
+    int time[k];
+    double totalP=0;
+    int ptt=0; //previous total time
+    for (int i=0;i<k;++i) {
+        totalP+=p[i];
+        time[i]=TIME*totalP-ptt;
+        ptt=TIME*totalP;
+    }
+    time[k-1]+=TIME-ptt;
     for (int i=0;i<n;++i) {
-        for (int r=0;r<ROWS;r++) {
-            GPIO_OUT = pattern1[r];
-            delay(time1);
-            GPIO_OUT = pattern2[r];
-            delay(time2);
-        }
+        /*for (int r=0;r<ROWS;++r) {
+            /*for (int j=0;j<k;++j) {
+                //GPIO_OUT = pattern[j][r];
+                //delay(time[j]);
+            }/
+        }*/
     }
 }
 static unsigned prevA;
@@ -113,26 +120,33 @@ void displayI(const unsigned pattern[ROWS], int n, unsigned input[], int* signal
     for (int i=0;i<n;++i) {
         curr=handleInput(GPIO_IN);
         if (curr) input[(*signals)++]=curr;
-        for (int r=0;r<ROWS;r++) {
+        for (int r=0;r<ROWS;++r) {
             GPIO_OUT = pattern[r];
             delay(TIME);
         }
     }
 }
-/* display2I -- display between two patterns pattern for n*15msec and record input */
-void display2I(const unsigned pattern1[ROWS], const unsigned pattern2[ROWS], double p, int n, unsigned input[], int* signals) {
+/* displayNI -- display k patterns for n*15msec and record input */
+void displayNI(const unsigned pattern[][ROWS], const double p[], const int k, int n, unsigned input[], int* signals) {
     unsigned curr;
-    int time1=p*TIME;
-    int time2=TIME-p*TIME;
+    int time[k];
+    double totalP=0;
+    int ptt=0; //previous total time
+    for (int i=0;i<k;++i) {
+        totalP+=p[i];
+        time[i]=TIME*totalP-ptt;
+        ptt=TIME*totalP;
+    }
+    time[k-1]+=TIME-ptt;
     for (int i=0;i<n;++i) {
-        curr=handleInput(GPIO_IN);
+        /*curr=handleInput(GPIO_IN);
         if (curr) input[(*signals)++]=curr;
-        for (int r=0;r<ROWS;r++) {
-            GPIO_OUT = pattern1[r];
-            delay(time1);
-            GPIO_OUT = pattern2[r];
-            delay(time2);
-        }
+        for (int r=0;r<ROWS;++r) {
+            /*for (int j=0;j<k;++j) {
+                //GPIO_OUT = pattern[j][r];
+                //delay(time[j]);
+            }/
+        }*/
     }
 }
 /* initGio -- initializes graphics and IO */

@@ -25,6 +25,7 @@ static int FPSTEP=1;
 static int blockDelay;
 static int flicker;
 static int timeStamp;
+static const double p[2]={0.033,0.967};
 
 static void DFS(int x, int y) {
     isReachable[x][y]=timeStamp;
@@ -106,14 +107,14 @@ static void genImageAndPats(void) {
         if (blocks[i].x>=0 && blocks[i].x<GSIZE) image[blocks[i].x][blocks[i].y]=1;
         if (blocks[i].x>0 && blocks[i].x<=GSIZE) image[blocks[i].x-1][blocks[i].y]=1;
     }
-    generatePattern(image,pat2);
+    generatePattern(image,pat[1]);
     image[man.x][man.y]=1;
-    generatePattern(image,pat1);
+    generatePattern(image,pat[0]);
 }
 
 static void graphicsUpdate(void) {
     genImageAndPats();
-    display2I(pat1,pat2,0.033,FPSTEP,input,&signals);
+    displayNI(pat,p,2,FPSTEP,input,&signals);
 }
 
 static void processInput(void) {
@@ -160,6 +161,6 @@ int playDodgeGame(void) {
         }
     }
     genImageAndPats();
-    display(pat1,40);
+    display(pat[0],40);
     return (score+4)/5;
 }

@@ -1,4 +1,4 @@
-# Microbit-Game-Suite
+# Micro:bit Game Suite
 Game suite for the BBC Micro:bit.
 
 Games included:
