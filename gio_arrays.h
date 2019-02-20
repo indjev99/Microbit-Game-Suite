@@ -5,6 +5,7 @@
 
 unsigned image[GSIZE][GSIZE];
 unsigned pat[4][ROWS];
+int times[4];
 int signals;
 unsigned input[100];
 

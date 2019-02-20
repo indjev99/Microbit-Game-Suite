@@ -32,13 +32,12 @@ static struct point ballVelocity;
 static struct point ballLocation;
 static int score;
 static int FPSTEP=2;
-static double p[4];
 
 static void resetGame(void) {
-    ballVelocity.x=0.1;
-    ballVelocity.y=0.25;
+    ballVelocity.x=0.025;
+    ballVelocity.y=0.0625;
     ballLocation.x=1.5;//rand()%(GSIZE*10)/10.0;
-    ballLocation.y=0;//rand()%(GSIZE*10)/10.0;
+    ballLocation.y=1.5;//rand()%(GSIZE*10)/10.0;
     score=0;
 }
 static void genImageAndPats(void) {
@@ -50,26 +49,37 @@ static void genImageAndPats(void) {
     /*int x=0.5+ballLocation.x;
     int y=0.5+ballLocation.y;
     image[x][y]=1;
-    generatePattern(image,pat1);*/
-    double x=ballLocation.x;
-    double y=ballLocation.y;
-    int x1=x;
-    int y1=y;
-    int x2=x+1-EPS;
-    int y2=y+1-EPS;
-    double bx1,bx2,by1,by2;
-    bx1=x2-x;
-    bx2=x-x1;
-    by1=y2-y;
-    by2=y-y1;
-    p[0]=bx1*by1;
-    p[1]=bx1*by2;
-    p[2]=bx2*by1;
-    p[3]=bx2*by2;
-    p[0]*=p[0];
-    p[1]*=p[1];
-    p[2]*=p[2];
-    p[3]*=p[3];
+    generatePattern(image,pat[0]);
+    times[0]=5000;*/
+    int x1=ballLocation.x;
+    int y1=ballLocation.y;
+    int x2=ballLocation.x+1-EPS;
+    int y2=ballLocation.y+1-EPS;
+    float bx1,bx2,by1,by2;
+    bx1=x2-ballLocation.x;
+    bx2=ballLocation.x-x1;
+    by1=y2-ballLocation.y;
+    by2=ballLocation.y-y1;
+    float b11,b12,b21,b22;
+    b11=bx1*by1;
+    b11=b11*b11*b11*b11;
+    b12=bx1*by2;
+    b12=b12*b12*b12*b12;
+    b21=bx2*by1;
+    b21=b21*b21*b21*b21;
+    b22=bx2*by2;
+    b22=b22*b22*b22*b22;
+    float norm=4;
+    float nn=b11+b12+b21+b22;
+    //float norm=1/(b11+b12+b21+b22);
+    b11*=norm;
+    b12*=norm;
+    b21*=norm;
+    b22*=norm;
+    times[0]=5000*b11;
+    times[1]=5000*b12;
+    times[2]=5000*b21;
+    times[3]=5000*b22;
     image[x1][y1]=1;
     generatePattern(image,pat[0]);
     image[x1][y1]=0;
@@ -86,7 +96,7 @@ static void genImageAndPats(void) {
 
 static void graphicsUpdate(void) {
     genImageAndPats();
-    displayNI(pat,p,4,FPSTEP,input,&signals);
+    displayNI(pat,times,4,FPSTEP,input,&signals);
 }
 
 static void processInput(void) {
@@ -105,6 +115,6 @@ int playPongGame(void) {
         moveBall();
     }
     genImageAndPats();
-    displayN(pat,p,4,40);
+    displayN(pat,times,4,40);
     return score;
 }

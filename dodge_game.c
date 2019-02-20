@@ -25,7 +25,6 @@ static int FPSTEP=1;
 static int blockDelay;
 static int flicker;
 static int timeStamp;
-static const double p[2]={0.033,0.967};
 
 static void DFS(int x, int y) {
     isReachable[x][y]=timeStamp;
@@ -94,6 +93,8 @@ static void resetGame(void) {
     genBlock(blockNum);
     selectDifficulty();
     flicker=4;
+    times[0]=165;
+    times[1]=5000;
 }
 
 static void genImageAndPats(void) {
@@ -114,7 +115,7 @@ static void genImageAndPats(void) {
 
 static void graphicsUpdate(void) {
     genImageAndPats();
-    displayNI(pat,p,2,FPSTEP,input,&signals);
+    displayNI(pat,times,2,FPSTEP,input,&signals);
 }
 
 static void processInput(void) {
