@@ -3,7 +3,7 @@ Game suite for the BBC Micro:bit.
 
 Games included:
 * Snake - Control the snake to eat food and avoid hitting yourself. A - turn counter-clockwise, B - turn clockwise.
-* Dode - Control your character on the bottom to avoid getting hit by the falling black. A - move left, B - move right.
+* Dodge - Control your character on the bottom to avoid getting hit by the falling black. A - move left, B - move right.
 
 Games in development:
 * Pong
