@@ -3,11 +3,10 @@
 
 #define GSIZE 5
 #define ROWS 3
+#define TIME 5000
 
 /* generatePattern -- generates the pattern for a grid of pixels */
 void generatePattern(const unsigned image[GSIZE][GSIZE], unsigned pattern[ROWS]);
-/* generateNumberPattern -- generate a pattern for a number in unary */
-void generateNumberPattern(int n, unsigned pattern[ROWS]);
 /* delay -- pause for n microseconds */
 void delay(int n);
 /* display -- display a pattern for n*15msec */

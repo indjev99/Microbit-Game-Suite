@@ -4,8 +4,9 @@
 #include "gio.h"
 
 unsigned image[GSIZE][GSIZE];
-unsigned pat[4][ROWS];
-int times[4];
+float imageF[GSIZE][GSIZE];
+unsigned pat[13][ROWS];
+int times[13];
 int signals;
 unsigned input[100];
 

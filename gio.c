@@ -2,7 +2,6 @@
 #include "hardware.h"
 
 #define COLS 9
-#define TIME 5000
 
 static const int rows[GSIZE][GSIZE] = {
     {0, 1, 0, 1, 0},
@@ -21,9 +20,6 @@ static const int cols[GSIZE][GSIZE] = {
 static const unsigned rowMasks[ROWS] = {
     0x3ff0, 0x5ff0, 0x9ff0
 };
-static const unsigned rowMasksFlip[ROWS] = {
-    0x2000, 0x4000, 0x8000
-};
 static const unsigned colMasks[COLS] = {
     0x0010, 0x0020, 0x0040,
     0x0080, 0x0100, 0x0200,
@@ -38,27 +34,6 @@ void generatePattern(const unsigned image[GSIZE][GSIZE], unsigned pattern[ROWS])
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
             if (image[i][j]) pattern[rows[i][j]]-=colMasks[cols[i][j]];
-        }
-    }
-}
-/* generateNumberPattern -- generate a pattern for a number in unary */
-void generateNumberPattern(int n, unsigned pattern[ROWS]) {
-    int curr=0;
-    unsigned flip=0;
-    while(n>GSIZE*GSIZE) {
-        n-=GSIZE*GSIZE;
-        flip=!flip;
-    }
-    for (int i=0;i<ROWS;++i) {
-        if (!flip) pattern[i]=rowMasks[i];
-        else pattern[i]=rowMasksFlip[i];
-    }
-    for (int i=0;i<GSIZE && curr<n;++i) {
-        for (int j=0;j<GSIZE && curr<n;++j)
-        {
-            if (!flip) pattern[rows[i][j]]-=colMasks[cols[i][j]];
-            else pattern[rows[i][j]]+=colMasks[cols[i][j]];
-            ++curr;
         }
     }
 }
@@ -90,12 +65,6 @@ void displayN(const unsigned patterns[][ROWS], const int times[], int patternNum
             }
         }
     }
-    /*for (int i=0;i<n;++i) {
-        for (int r=0;r<ROWS;++r) {
-            GPIO_OUT = pattern[0][r];
-            delay(TIME);
-        }
-    }*/
 }
 static unsigned prevA;
 static unsigned prevB;
@@ -136,18 +105,12 @@ void displayNI(const unsigned patterns[][ROWS], const int times[], int patternNu
             }
         }
     }
-    /*for (int i=0;i<n;++i) {
-        curr=handleInput(GPIO_IN);
-        if (curr) input[(*signals)++]=curr;
-        for (int r=0;r<ROWS;++r) {
-            GPIO_OUT = pattern[0][r];
-            delay(TIME);
-        }
-    }*/
 }
 /* initGio -- initializes graphics and IO */
 void initGio(void) {
-    GPIO_DIR = 0xfff0;
-    GPIO_PINCNF[BUTTON_A] = 0;
-    GPIO_PINCNF[BUTTON_B] = 0;
+    GPIO_DIR=0xfff0;
+    GPIO_PINCNF[BUTTON_A]=0;
+    GPIO_PINCNF[BUTTON_B]=0;
+    prevA=0;
+    prevB=0;
 }
