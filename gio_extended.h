@@ -11,8 +11,8 @@ int getSinglePress(unsigned input[], int* signals);
 void generateNumberPattern(int n, unsigned pattern[ROWS]);
 /* selectNumber -- input a number in unary in some closed interval, uses gio_arrays */
 void selectNumber(int from, int to, int* number);
-/* generateFloatPatterns -- generates the patterns and times for a grid of float pixels */
-void generateFloatPatterns(const float image[GSIZE][GSIZE], unsigned patterns[][ROWS], int times[], int patternNumber);
+/* generateAnaloguePatterns -- generates the patterns and times for a grid of analogue pixels 0-255 */
+void generateAnaloguePatterns(const int imageAnalogue[GSIZE][GSIZE], unsigned patterns[][ROWS], int times[], int patternNumber);
 
 
 #endif // GIO_EXTENDED_H_INCLUDED

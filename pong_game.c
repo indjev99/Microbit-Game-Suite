@@ -3,27 +3,25 @@
 #include "gio_arrays.h"
 #include "rng.h"
 
-#define EPS 1e-6
-
 const unsigned pongGamePreview[ROWS] = {
     0x3ff0, 0x5bf0, 0x8fe0
 };
 
 struct point {
-    double x, y;
+    int x, y;
 };
 
 static void movePoint(struct point* location, struct point* velocity) {
     location->x+=velocity->x;
     location->y+=velocity->y;
-    while (location->x<0 || location->x>GSIZE-1) {
+    while (location->x<0 || location->x>=(GSIZE-1)*256) {
         if (location->x<0) location->x=-location->x;
-        else location->x=2*GSIZE-2-location->x;
+        else location->x=(GSIZE-1)*512-location->x-1;
         velocity->x=-velocity->x;
     }
-    while (location->y<0 || location->y>GSIZE-1) {
+    while (location->y<0 || location->y>=(GSIZE-1)*256) {
         if (location->y<0) location->y=-location->y;
-        else location->y=2*GSIZE-2-location->y;
+        else location->y=(GSIZE-1)*512-location->y-1;
         velocity->y=-velocity->y;
     }
 }
@@ -31,65 +29,44 @@ static void movePoint(struct point* location, struct point* velocity) {
 static struct point ballVelocity;
 static struct point ballLocation;
 static int score;
-static int FPSTEP=2;
+static int FPSTEP=1;
 
 static void resetGame(void) {
-    ballVelocity.x=0.025;
-    ballVelocity.y=0.0625;
-    ballLocation.x=1.5;//rand()%(GSIZE*10)/10.0;
-    ballLocation.y=1.5;//rand()%(GSIZE*10)/10.0;
+    ballVelocity.x=0;
+    ballVelocity.y=0;
+    ballLocation.x=0;//rand()%(GSIZE*256);
+    ballLocation.y=3*256;//rand()%(GSIZE*256);
     score=0;
 }
 static void genImageAndPats(void) {
     for (int i=0;i<GSIZE;++i) {
         for (int j=0;j<GSIZE;++j) {
-            imageF[i][j]=0;//(i*GSIZE+j)*1.0/(GSIZE*GSIZE);
+            imageA[i][j]=0;//(i*GSIZE+j)*256/(GSIZE*GSIZE);
         }
     }
-    imageF[0][0]=0;
-    imageF[0][1]=0.0625;
-    imageF[0][2]=0.125;
-    imageF[0][3]=0.1875;
-    imageF[0][4]=0.25;
-    imageF[1][4]=0.3125;
-    imageF[2][4]=0.375;
-    imageF[3][4]=0.4375;
-    imageF[4][4]=0.5;
-    imageF[4][3]=0.5625;
-    imageF[4][2]=0.625;
-    imageF[4][1]=0.6875;
-    imageF[4][0]=0.75;
-    imageF[3][0]=0.8125;
-    imageF[2][0]=0.875;
-    imageF[2][1]=0.9375;
-    imageF[2][2]=1;
 
-    /*int x=0.5+ballLocation.x;
-    int y=0.5+ballLocation.y;
-    image[x][y]=1;
-    generatePattern(image,pat[0]);
-    times[0]=5000;*/
-    /*float x=ballLocation.x;
-    float y=ballLocation.y;
-    int x1=x;
-    int y1=y;
-    int x2=x+1-EPS;
-    int y2=y+1-EPS;
-    float bx1,bx2,by1,by2;
-    bx1=x2-x;
-    bx2=x-x1;
-    by1=y2-y;
-    by2=y-y1;
-    float b11,b12,b21,b22;
-    b11=bx1*by1;
-    b12=bx1*by2;
-    b21=bx2*by1;
-    b22=bx2*by2;*/
-    /*imageF[x1][y1]=b11;
-    imageF[x1][y2]=b12;
-    imageF[x2][y1]=b21;
-    imageF[x2][y2]=b22;*/
-    generateFloatPatterns(imageF,pat,times,13);
+    imageA[ballLocation.x/256][ballLocation.y/256]=ballLocation.x-ballLocation.x/256*256;
+    times[0]=5000;
+
+    /*int x=ballLocation.x;
+    int y=ballLocation.y;
+    int x1=x>>8;
+    int y1=y>>8;
+    int bx1,bx2,by1,by2;
+    bx2=x-(x1<<8);
+    bx1=255-bx2;
+    by2=y-(y1<<8);
+    by1=255-by2;
+    int b11,b12,b21,b22;
+    b11=(128+bx1*by1)>>8;
+    b12=(128+bx1*by2)>>8;
+    b21=(128+bx2*by1)>>8;
+    b22=(128+bx2*by2)>>8;
+    imageA[x1][y1]=bx1;
+    imageA[x1][y1+1]=bx1;
+    imageA[x1+1][y1]=bx2;
+    imageA[x1+1][y1+1]=bx2;*/
+    generateAnaloguePatterns(imageA,pat,times,13);
 }
 
 static void graphicsUpdate(void) {
@@ -98,7 +75,7 @@ static void graphicsUpdate(void) {
 }
 
 static void processInput(void) {
-
+    
 }
 
 static void moveBall(void) {
@@ -110,7 +87,8 @@ int playPongGame(void) {
     while (1) {
         graphicsUpdate();
         processInput();
-        moveBall();
+        //moveBall();
+        ballLocation.x+=1;
     }
     genImageAndPats();
     displayN(pat,times,4,40);
